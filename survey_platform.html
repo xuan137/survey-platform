@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickSurvey — 2문항 설문</title>
+<style>
+:root{--bg:#f5f7fb;--surface:#fff;--text:#172033;--muted:#697386;--line:#e5e9f0;--primary:#315efb;--primary2:#2448c8;--accent:#13a879;--shadow:0 12px 35px rgba(25,38,70,.08)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif} .app{min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{max-width:1080px;margin:auto;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:20px}.badge{font-size:12px;background:#eef2ff;color:var(--primary);padding:6px 10px;border-radius:999px;font-weight:700}
+main{max-width:1080px;margin:0 auto;padding:42px 22px 70px}.hero{margin-bottom:28px}.eyebrow{color:var(--primary);font-weight:800;font-size:13px;letter-spacing:.04em}.hero h1{font-size:36px;line-height:1.15;margin:8px 0 10px}.hero p{color:var(--muted);margin:0;line-height:1.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}.question-card{min-height:290px}.qnum{font-size:12px;color:var(--primary);font-weight:800}.question{font-size:21px;font-weight:750;line-height:1.45;margin:8px 0 18px}.options{display:grid;gap:10px}.option{border:1px solid var(--line);border-radius:12px;padding:13px 15px;cursor:pointer;background:#fff;transition:.18s;display:flex;align-items:center;gap:10px}.option:hover{border-color:#aebcf9;background:#f8faff}.option.selected{border-color:var(--primary);background:#eef2ff}.radio{width:17px;height:17px;border:2px solid #b8c0cf;border-radius:50%;display:inline-block;flex:none}.selected .radio{border:5px solid var(--primary)}
+.actions{display:flex;gap:10px;margin-top:20px}.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:750;cursor:pointer}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#fff;border:1px solid var(--line);color:var(--text)}.primary:disabled{opacity:.45;cursor:not-allowed}
+.results{margin-top:30px}.result-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:16px}.result-head h2{margin:0;font-size:25px}.result-head span{color:var(--muted);font-size:13px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:20px}.chart-card h3{margin:0 0 5px;font-size:17px}.chart-card .sub{font-size:12px;color:var(--muted);margin-bottom:20px}.bar-row{display:grid;grid-template-columns:100px 1fr 42px;gap:10px;align-items:center;margin:13px 0}.label{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track{height:12px;background:#edf0f5;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:var(--primary);border-radius:99px;transition:width .5s ease}.count{text-align:right;font-weight:750;font-size:13px}.insight{margin-top:18px;padding:15px 16px;border-radius:12px;background:#f0faf6;border:1px solid #d6f1e7;color:#166b50;font-size:13px;line-height:1.6}
+.empty{padding:34px;text-align:center;color:var(--muted);border:1px dashed #ccd2dd;border-radius:14px}.stats{display:flex;gap:22px;margin-top:18px}.stat strong{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}footer{max-width:1080px;margin:auto;padding:0 22px 35px;color:#8a93a4;font-size:12px}
+@media(max-width:760px){.grid,.charts{grid-template-columns:1fr}.hero h1{font-size:29px}.nav{padding:15px 18px}main{padding:30px 16px 50px}.card{padding:20px}.bar-row{grid-template-columns:86px 1fr 32px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="nav"><div class="brand">QuickSurvey</div><div class="badge">2 Questions · Live Results</div></div></header>
+<main>
+<section class="hero"><div class="eyebrow">MINI SURVEY PLATFORM</div><h1>2개의 질문에 답하고<br>결과를 바로 확인하세요.</h1><p>응답이 제출되는 즉시 선택지별 응답 수와 비율을 비교할 수 있습니다.<br>실제 GitHub Pages에서도 별도의 서버 없이 작동하도록 설계했습니다.</p></section>
+<section class="grid">
+<article class="card question-card"><div class="qnum">QUESTION 01</div><div class="question">이 서비스에 대한 전반적인 만족도는 어떠신가요?</div><div class="options" id="q1"></div></article>
+<article class="card question-card"><div class="qnum">QUESTION 02</div><div class="question">이 서비스를 얼마나 자주 이용하시나요?</div><div class="options" id="q2"></div></article>
+</section>
+<div class="actions"><button class="btn primary" id="submit" disabled>응답 제출하기</button><button class="btn secondary" id="reset">결과 초기화</button></div>
+<section class="results"><div class="result-head"><div><h2>실시간 결과</h2><span id="total">아직 응답이 없습니다.</span></div></div><div class="charts"><article class="card chart-card"><h3>만족도 분포</h3><div class="sub">각 선택지의 응답 수를 비교합니다.</div><div id="chart1"></div></article><article class="card chart-card"><h3>이용 빈도 분포</h3><div class="sub">전체 응답에서 차지하는 비율도 함께 확인합니다.</div><div id="chart2"></div></article></div><div id="insight" class="insight" style="display:none"></div></section>
+</main><footer>데이터는 이 브라우저의 localStorage에 저장됩니다. GitHub Pages에서는 사용자별 브라우저 데이터가 독립적으로 저장됩니다.</footer>
+</div>
+<script>
+// 질문과 선택지는 이 CONFIG만 수정하면 쉽게 바꿀 수 있습니다.
+const CONFIG={
+ q1:["매우 만족","만족","보통","불만족","매우 불만족"],
+ q2:["매일","주 3~4회","주 1~2회","월 1~3회","거의 이용하지 않음"]
+};
+const state={q1:null,q2:null};
+const KEY='quicksurvey-v1';
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{q1:Array(CONFIG.q1.length).fill(0),q2:Array(CONFIG.q2.length).fill(0),total:0};
+function renderOptions(id,items){const el=document.getElementById(id);el.innerHTML='';items.forEach((x,i)=>{const b=document.createElement('div');b.className='option';b.innerHTML=`<span class="radio"></span><span>${x}</span>`;b.onclick=()=>{state[id]=i;[...el.children].forEach(n=>n.classList.remove('selected'));b.classList.add('selected');check();};el.appendChild(b);});}
+function check(){document.getElementById('submit').disabled=!(state.q1!==null&&state.q2!==null)}
+function draw(id,labels,counts){const el=document.getElementById(id);if(data.total===0){el.innerHTML='<div class="empty">응답이 제출되면 결과가 여기에 표시됩니다.</div>';return}const max=Math.max(...counts,1);el.innerHTML=counts.map((c,i)=>{const pct=Math.round(c/data.total*100);return `<div class="bar-row"><div class="label" title="${labels[i]}">${labels[i]}</div><div class="track"><div class="fill" style="width:${c/max*100}%"></div></div><div class="count">${pct}%</div></div>`}).join('');}
+function render(){draw('chart1',CONFIG.q1,data.q1);draw('chart2',CONFIG.q2,data.q2);document.getElementById('total').textContent=data.total?`총 ${data.total}명 응답 · 브라우저에 저장됨`:'아직 응답이 없습니다.';const insight=document.getElementById('insight');if(data.total){const a=data.q1.indexOf(Math.max(...data.q1)),b=data.q2.indexOf(Math.max(...data.q2));insight.style.display='block';insight.innerHTML=`<strong>현재 가장 많이 선택된 응답</strong><br>만족도는 <b>${CONFIG.q1[a]}</b>, 이용 빈도는 <b>${CONFIG.q2[b]}</b>입니다. 막대의 길이는 응답 수, 오른쪽 숫자는 전체 대비 비율을 나타냅니다.`;}else insight.style.display='none';}
+document.getElementById('submit').onclick=()=>{data.q1[state.q1]++;data.q2[state.q2]++;data.total++;localStorage.setItem(KEY,JSON.stringify(data));state.q1=state.q2=null;document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));check();render();document.querySelector('.results').scrollIntoView({behavior:'smooth'});};
+document.getElementById('reset').onclick=()=>{if(confirm('저장된 모든 응답 결과를 초기화할까요?')){data={q1:Array(CONFIG.q1.length).fill(0),q2:Array(CONFIG.q2.length).fill(0),total:0};localStorage.setItem(KEY,JSON.stringify(data));render();}};
+renderOptions('q1',CONFIG.q1);renderOptions('q2',CONFIG.q2);render();
+</script>
+</body></html>
